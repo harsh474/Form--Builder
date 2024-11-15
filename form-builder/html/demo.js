@@ -250,28 +250,6 @@ function editField(button) {
   const fieldType = element.dataset.type;
   console.log("uniqueId", uniqueId);
   const label = element.querySelector('.element-label');
-  forms = localStorage.getItem("forms");
-  forms = JSON.parse(forms);
-  forms.forEach((form) => {
-    if (form.id === id) {
-      // console.log("forms after adding form structure", forms.formStructure.html);
-      if (form.formStructure) {
-        let temp = form.formStructure.html;
-        // Parse the HTML string into a Document object
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(temp, 'text/html');
-        const element = doc.querySelector(`[id="${uniqueId}"]`);
-
-        // Check if the element is found and log it
-        if (element) {
-          console.log('Element found:', element);
-        } else {
-          console.log('Element not found', temp);
-          console.log('Element not found because', doc);
-        }
-      }
-    }
-  })
 
   toolbar.innerHTML = ''; // Clear the previous toolbar content
   document.head.querySelectorAll('style[data-edit-style]').forEach(style => style.remove()); // Remove previous styles
@@ -1238,9 +1216,33 @@ text-align:left;
       break;
   }
   console.log("form canvas after changing feild", formCanvas.innerHTML)
+  forms = localStorage.getItem("forms");
+  forms = JSON.parse(forms);
+  forms.forEach((form) => {
+    if (form.id === id) {
+      // console.log("forms after adding form structure", forms.formStructure.html);
+      if (form.formStructure) {
+        let temp = form.formStructure.html;
+        // Parse the HTML string into a Document object
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(temp, 'text/html');
+        const element = doc.querySelector(`[id="${uniqueId}"]`);
+
+        // Check if the element is found and log it
+        if (element) {
+
+          console.log('Element found:', element);
+          // deleteField(null,uniqueId);
+        } else {
+          console.log('Element not found', temp);
+          console.log('Element not found because', doc);
+        }
+      }
+    }
+  })
 
 }
-console.log("form canvas after changing feild", formCanvas.innerHTML)
+
 
 
 function updateField(value, type, uniqueId = null, fieldType = null) {
@@ -1832,58 +1834,60 @@ function displayAvailableElements() {
 }
 
 // Delete the form element
-function deleteField(button) {
-  const element = button.closest('.form-element');
-  console.log(element); 
-  let idofelement = element.getAttribute('data-unique-id');
-  console.log("in deletefunc idofelemet is :",idofelement);
-  element.remove();
- console.log("element we are getting inittially after on click delete button",element)
-  const remainingElements = formCanvas.querySelectorAll('.form-element');
+function deleteField(button=null, elementid = null) {
+  let idofelement;
+  console.log(button,elementid);
+  if (elementid) {
+    idofelement = elementid;
+  }
+  else {
+    const element = button.closest('.form-element');
+    console.log(element);
+    idofelement = element.getAttribute('data-unique-id');
+    console.log("in deletefunc idofelemet is :", idofelement);
+    element.remove();
+    console.log("element we are getting inittially after on click delete button", element)
+    const remainingElements = formCanvas.querySelectorAll('.form-element');
+  }
+
 
   // If no elements are left in the form, display a message or handle empty form state
-  if (remainingElements.length === 0) {
-    displayAvailableElements();
-    localStorage.removeItem('formStructure');
-  }
 
   forms = localStorage.getItem("forms");
   console.log(forms);
   forms = JSON.parse(forms);
   console.log("forms: ", forms);
-  console.log("id",id,forms[0].id);
+  console.log("id", id, forms[0].id);
   forms.forEach((form) => {
     if (form.id === id) {
-      console.log("formstructure",form.formStructure);
+      console.log("formstructure", form.formStructure);
       // console.log("forms after adding form structure", forms.formStructure.html);
       if (form.formStructure) {
         let storedHtml = form.formStructure.html;
         // Parse the HTML string into a DOM element
         let storedDom = new DOMParser().parseFromString(storedHtml, "text/html").body;
-        console.log("storedDom in delfun",storedDom);
+        console.log("storedDom in delfun", storedDom);
         // Select the element to delete using its ID
         let elementToDelete = storedDom.querySelector(`[id=${idofelement}]`)
         // If element found, remove it from the DOM
-      console.log(elementToDelete);
+        console.log(elementToDelete);
         if (elementToDelete) {
           console.log("element is deleted")
-           elementToDelete.remove();
-           console.log(storedDom);
-           console.log(storedDom.innerHTML);
+          elementToDelete.remove();
+          console.log(storedDom);
+          console.log(storedDom.innerHTML);
           //  console.log(storedDom.body.innerHTML);
-           
 
-           form.formStructure.html = storedDom.innerHTML ;
+
+          form.formStructure.html = storedDom.innerHTML;
           //  console.log("element is deleted",form.forsmStructure.html)
         }
       }
-      
+
       form.formCanvas = formCanvas.innerHTML;
       console.log("formcanvas.innerHTML", formCanvas.innerHTML);
     }
   })
-
-  console.log("forms after adding form structure", forms);
   localStorage.setItem("forms", JSON.stringify(forms))
 }
 
@@ -1892,9 +1896,13 @@ document.getElementById('saveForm').addEventListener('click', () => {
   let formHTML = "";
   if (previewModal.innerHTML) {
     formHTML = previewModal.innerHTML; // Get the form HTML
+    console.log("previewModal.innerHTML",formHTML)
   } else {
+    
     formHTML = updatedFormHTML;
+    console.log("previewModal.innerHTML",formHTML)
   }
+  
 
 
   const validationScript = `
