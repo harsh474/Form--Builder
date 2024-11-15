@@ -1,0 +1,21 @@
+.upload-button {
+    /* Styles for the upload button */
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 900;
+    margin: 50px;
+  }
+  
+  .upload-message {
+    display: none; /* Initially hide the upload message */
+  }
+  
+  .upload-message.visible {
+    display: block;
+    margin-left: 60px;
+  }

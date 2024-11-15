@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <p id="demo">Hi</p>
+    <script>
+        xmlDoc = xmlhttp.responseXML;
+        txt = "";
+        x = xmlDoc.getElementsByTagName("ARTIST");
+        for (i = 0; i < x.length; i++) {
+            txt += x[i].childNodes[0].nodeValue + "<br>";
+        }
+        document.getElementById("demo").innerHTML = txt ;
+
+    </script>
+
+</body>
+
+</html>

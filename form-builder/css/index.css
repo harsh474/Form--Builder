@@ -1,0 +1,65 @@
+.navbar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: #f0f0f0; /* Background color of the navbar */
+    padding: 10px 0;
+  }
+  
+  .logo {
+    text-decoration: none;
+    font-size: 30px;
+    font-weight: bold;
+    color: #333; /* Text color of the logo */
+  }
+  
+  .text {
+    background-image: linear-gradient(to right, indigo, cyan);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    cursor: pointer;
+    margin-left: 15px;
+  }
+  
+  
+  .theme-switcher-and-tabs {
+    display: flex;
+    align-items: center;
+    gap: 1vw; /* Adjust the gap between the theme switcher and tabs */
+    margin-left: auto; /* Pushes this div to the right side */
+    margin-right: 20px;
+  }
+  
+  
+  .tabs {
+    display: flex;
+    gap: 1vw;
+  }
+  
+  .tabs-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .tabs-trigger {
+    cursor: pointer;
+  }
+  
+  .icon {
+    font-size: 1.2rem;
+  }
+  
+  .navbar.dark {
+    background-color: #333;
+  }
+
+  body.dark{
+    background-color: black;
+  }
+  
+  .icon.dark {
+    color: #f0f0f0; /* Make icons light in dark mode */
+  }

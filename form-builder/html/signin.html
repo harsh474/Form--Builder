@@ -1,0 +1,772 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Preview</title>
+    <link rel="stylesheet" href="../css/signin.css">
+</head>
+<body>
+    <div id="drag-area">
+        <h3>Drag Elements Here</h3>
+        <div class="draggable" draggable="true">Text Input</div>
+        <div class="draggable" draggable="true">Checkbox</div>
+        <div class="draggable" draggable="true">Dropdown</div>
+    </div>
+
+    <div id="form-area">
+        <h3>Your Form</h3>
+        <div id="drop-area"></div>
+        <button id="preview-btn">Preview</button>
+    </div>
+
+    <div id="preview-modal" class="hidden">
+        <h3>Form Preview</h3>
+        <div id="preview-content"></div>
+        <button id="close-preview-btn">Close</button>
+        <button id="download-btn">Download</button>
+    </div>
+
+    <script src="../js/"></script>
+</body>
+</html> -->
+const formCanvas = document.getElementById('formCanvas');
+let toolbar = document.querySelector('.toolbar');
+const drophint = document.querySelector('.drop-hint');
+
+// const previewBtn = document.getElementById('preview-btn');
+const previewModal = document.getElementById('preview-modal');
+const previewContent = document.getElementById('preview-content');
+const closePreviewBtn = document.getElementById('close-preview-btn');
+let draggedElement;
+let dropTarget;
+
+// Enable drag-and-drop functionality
+const draggables = document.querySelectorAll('.draggable');
+
+draggables.forEach(draggable => {
+    draggable.addEventListener('dragstart', (e) => {
+        if (e.target.classList.contains('form-element')) {
+            draggedElement = e.target;
+            setTimeout(() => e.target.classList.add('invisible1'), 0); // Hide the element while dragging
+            console.log('start')
+        }
+        draggedElement = e.target.id;
+        console.log('start')
+    });
+});
+
+formCanvas.addEventListener('dragend', (e) => {
+    if (draggedElement) {
+        draggedElement.classList.remove('invisible'); // Show the element again
+        console.log("end")
+    }
+});
+
+formCanvas.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    if (e.target.classList.contains('draggable') && e.target !== draggedElement) {
+        dropTarget = e.target;
+        dropTarget.classList.add('drag-over');
+        console.log('over')
+    }
+    console.log('over')
+});
+
+formCanvas.addEventListener('dragleave', (e) => {
+    if (e.target.classList.contains('draggable')) {
+        e.target.classList.remove('drag-over');
+        console.log('leave')
+    }
+});
+
+formCanvas.addEventListener('drop', (e) => {
+    e.preventDefault();
+    if (dropTarget && draggedElement !== dropTarget) {
+        dropTarget.classList.remove('drag-over');
+
+        // Insert the dragged element before or after the drop target
+        const bounding = dropTarget.getBoundingClientRect();
+        const offset = e.clientY - bounding.top;
+        const position = offset > bounding.height / 2 ? 'after' : 'before';
+        console.log('drop')
+        if (position === 'after') {
+            formCanvas.insertBefore(draggedElement, dropTarget.nextSibling);
+            console.log('position after')
+        } else {
+            formCanvas.insertBefore(draggedElement, dropTarget);
+        }
+
+    }
+    document.querySelector('.drop-hint').style.display = 'none';
+    console.log('drop')
+    addField(draggedElement);
+});
+// document.getElementById('previewForm').addEventListener('click', function() {
+//     console.log("Previewing form...");
+
+//     const previewWindow = window.open('', '_blank');
+//     previewWindow.document.write('<html><head><title>Form Preview</title></head><body>');
+
+//     const formElements = formCanvas.querySelectorAll('.form-element');
+
+//     formElements.forEach(el => {
+//         // Clone the element to avoid modifying the original
+//         const clone = el.cloneNode(true);
+
+//         // Remove the action buttons (edit and delete)
+//         const actionButtons = clone.querySelector('.action-buttons');
+//         if (actionButtons) {
+//             actionButtons.remove(); // Remove the edit/delete buttons
+//         }
+
+//         // Append the modified element (without the buttons) to the preview window
+//         previewWindow.document.write(clone.innerHTML);
+//         previewWindow.document.write('<br>'); // Add space between form elements
+//     });
+
+//     previewWindow.document.write('</body></html>');
+//     previewWindow.document.close();
+// });
+
+
+
+closePreviewBtn.addEventListener('click', () => {
+    previewModal.classList.add('hidden');
+});
+
+function addField(type) {
+    const div = document.createElement('div');
+    div.classList.add('form-element');
+    div.dataset.type = type;
+
+    switch (type) {
+
+        case 'titleField':
+            div.innerHTML = '<span class="element-label" draggable="true">Title</span>' +
+                '<div class="action-buttons">' +
+                '<button class="edit-button" onclick="editField(this)">Edit</button>' +
+                '<button class="delete-button" onclick="deleteField(this)">Delete</button>' +
+                '</div>';
+            break;
+        case 'subtitleField':
+            div.innerHTML = '<span class="element-label" draggable="true">Subtitle</span>' +
+                '<div class="action-buttons">' +
+                '<button class="edit-button" onclick="editField(this)">Edit</button>' +
+                '<button class="delete-button" onclick="deleteField(this)">Delete</button>' +
+                '</div>';
+            break;
+        case 'paragraphField':
+            div.innerHTML = '<span class="element-label">Paragraph</span>' +
+                '<div class="action-buttons">' +
+                '<button class="edit-button" onclick="editField(this)">Edit</button>' +
+                '<button class="delete-button" onclick="deleteField(this)">Delete</button>' +
+                '</div>';
+            break;
+        case 'separatorField':
+            div.innerHTML = '<span class="element-label">Separator</span>' +
+                '<div class="action-buttons">' +
+                '<button class="edit-button" onclick="editField(this)">Edit</button>' +
+                '<button class="delete-button" onclick="deleteField(this)">Delete</button>' +
+                '</div>';
+            break;
+        case 'spacerField':
+            div.innerHTML = '<span class="element-label">Spacer</span>' +
+                '<div class="action-buttons">' +
+                '<button class="edit-button" onclick="editField(this)">Edit</button>' +
+                '<button class="delete-button" onclick="deleteField(this)">Delete</button>' +
+                '</div>';
+            break;
+        case 'textField':
+            div.innerHTML = '<span class="element-label">Text Field</span>' +
+                '<div class="action-buttons">' +
+                '<button class="edit-button" onclick="editField(this)">Edit</button>' +
+                '<button class="delete-button" onclick="deleteField(this)">Delete</button>' +
+                '</div>';
+            break;
+        case 'numberField':
+            div.innerHTML = '<span class="element-label">Number Field</span>' +
+                '<div class="action-buttons">' +
+                '<button class="edit-button" onclick="editField(this)">Edit</button>' +
+                '<button class="delete-button" onclick="deleteField(this)">Delete</button>' +
+                '</div>';
+            break;
+        case 'textAreaField':
+            div.innerHTML = '<span class="element-label">Text Area</span>' +
+                '<div class="action-buttons">' +
+                '<button class="edit-button" onclick="editField(this)">Edit</button>' +
+                '<button class="delete-button" onclick="deleteField(this)">Delete</button>' +
+                '</div>';
+            break;
+        case 'dateField':
+            div.innerHTML = '<span class="element-label">Date Field</span>' +
+                '<div class="action-buttons">' +
+                '<button class="edit-button" onclick="editField(this)">Edit</button>' +
+                '<button class="delete-button" onclick="deleteField(this)">Delete</button>' +
+                '</div>';
+            break;
+        case 'selectField':
+            div.innerHTML = '<span class="element-label">Select Field</span>' +
+                '<div class="action-buttons">' +
+                '<button class="edit-button" onclick="editField(this)">Edit</button>' +
+                '<button class="delete-button" onclick="deleteField(this)">Delete</button>' +
+                '</div>';
+            break;
+        case 'checkboxField':
+            div.innerHTML = '<span class="element-label">Checkbox</span>' +
+                '<div class="action-buttons">' +
+                '<button class="edit-button" onclick="editField(this)">Edit</button>' +
+                '<button class="delete-button" onclick="deleteField(this)">Delete</button>' +
+                '</div>';
+            break;
+        case 'buttonField':
+            div.innerHTML = '<span class="element-label">Button</span>' +
+                '<div class="action-buttons">' +
+                '<button class="edit-button" onclick="editField(this)">Edit</button>' +
+                '<button class="delete-button" onclick="deleteField(this)">Delete</button>' +
+                '</div>';
+            break;
+        case 'tableField':
+            div.innerHTML = '<span class="element-label">Table</span>' +
+                '<div class="action-buttons">' +
+                '<button class="edit-button" onclick="editField(this)">Edit</button>' +
+                '<button class="delete-button" onclick="deleteField(this)">Delete</button>' +
+                '</div>';
+            break;
+        default:
+            break;
+    }
+
+    formCanvas.appendChild(div);
+}
+
+
+
+// Function to handle editing field properties
+function editField(button) {
+    const element = button.closest('.form-element');
+    console.log(element)
+    // const element = button.parentElement;
+    const type = element.dataset.type;
+    const label = element.querySelector('.element-label');
+    // console.log(type,label)
+
+    // Clear previous toolbar content
+    toolbar.innerHTML = `<h3>Edit ${type.replace('Field', '')}</h3>`;
+
+    const style = document.createElement('style');
+    console.log(style)
+    // Add specific input fields for editing based on type
+    document.head.appendChild(style);
+
+    switch (type) {
+        case 'titleField':
+            style.innerHTML = `    .form-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  margin: auto;
+}
+
+.form-item {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.titlebtn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.titlebtn:hover {
+  background-color: #0056b3;
+}
+
+.title-display {
+  margin-top: 20px;
+  font-size: 24px;
+  text-align: center;
+  color: #333;
+}`;
+
+            toolbar.innerHTML += ` 
+   <div class="form-container">
+<form id="titleForm"  draggable="true">
+  <div class="form-item">
+    <span class="element-label">Title</span>
+    <input type="text" id="title" name="title" value="${label.innerText}"  onchange="updateField(this.value, '${element.dataset.type}') />
+  </div>
+  <div class="action-buttons">
+    <button type="button" class="titlebtn" id="saveButton" onclick="saveTitle('${type}')">Save</button>
+  </div>
+</form>
+</div>`;
+            break;
+        case 'subtitleField':
+            style.innerHTML = `    .form-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  margin: auto;
+}
+
+.form-item {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.subtitlebtn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.subtitlebtn:hover {
+  background-color: #0056b3;
+}
+
+.subtitle-display {
+  margin-top: 20px;
+  font-size: 20px;
+  text-align: center;
+  color: #333;
+}`
+            toolbar.innerHTML += `
+      <form id="subtitleForm">
+  <div class="form-item" draggable="true">
+    <label for="subtitle">Subtitle</label>
+    <input type="text" id="subtitle" name="subtitle" value="${label.innerText}" onchange="updateField(this.value, '${element.dataset.type}')"/>
+  </div>
+  <button type="button" id="saveButton" class="subtitlebtn" onclick="saveTitle('${type}')">Save</button>
+</form>`
+            break;
+        case 'paragraphField':
+            style.innerHTML = `    .form-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 500px;
+  margin: auto;
+}
+
+.form-item {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.paraBtn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.paraBtn:hover {
+  background-color: #0056b3;
+}
+
+.paragraph-display {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #555;
+}`
+            toolbar.innerHTML += `
+       <form id="paragraphForm">
+  <div class="form-item">
+    <label for="paragraph">Paragraph</label>
+    <textarea id="paragraph" name="paragraph" rows="5" onchange="updateField(this.value, '${element.dataset.type}')"></textarea>
+  </div>
+  <button type="button" class="paraBtn" id="saveButton" onclick="saveTitle('${type}')">Save</button>
+</form>`;
+            break;
+        case 'separatorField':
+            style.innerHTML = `.form-container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 500px;
+      margin: auto;
+    }
+
+    .form-item {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    hr {
+      border: 0;
+      border-top: 2px solid #ddd;
+      margin: 10px 0;
+    }`
+            toolbar.innerHTML += ` <div class="form-container">
+    <div class="form-item">
+      <label>Separator Field</label>
+    </div>
+  </div>`
+            break;
+        case 'textField':
+            style.innerHTML = `.form-item {
+margin-bottom: 20px;
+}
+
+label {
+display: block;
+font-weight: bold;
+margin-bottom: 5px;
+}
+
+input[type="text"], input[type="checkbox"] {
+padding: 5px;
+width: 100%;
+}
+
+.description {
+font-size: 0.9em;
+color: #666;
+}
+
+.textfdbtn {
+padding: 10px 15px;
+background-color: #007BFF;
+color: white;
+border: none;
+cursor: pointer;
+}
+
+.textfdbtn:hover {
+background-color: #0056b3;
+}
+
+#output {
+margin-top: 30px;
+}
+
+#outputLabel {
+font-weight: bold;
+}
+`
+            toolbar.innerHTML += `
+       <form id="textFieldForm">
+  <div class="form-item">
+    <label for="label">Label</label>
+    <input type="text" id="label" name="label" placeholder="Label" onchange="updateField(this.value, '${element.dataset.type}')" >
+  </div>
+  <div class="form-item">
+    <label for="placeholder">Placeholder</label>
+    <input type="text" id="placeholder" name="placeholder" placeholder="Placeholder" onchange="updateField(this.value, '${element.dataset.type}')">
+  </div>
+  <div class="form-item">
+    <label for="helperText">Helper Text</label>
+    <input type="text" id="helperText" name="helperText" placeholder="Helper Text" onchange="updateField(this.value, '${element.dataset.type}')">
+  </div>
+  <div class="form-item">
+    <label for="required">Required</label>
+    <input type="checkbox" id="required" name="required" >
+  </div>
+  <button type="button" class="textfdbtn" onclick="saveTitle('${type}')">Apply Changes</button>
+</form>
+        <label>Text Field: <input type="text" value="${label.innerText}" onchange="updateField(this.value, '${element.dataset.type}')"></label>`;
+            break;
+        case 'numberField':
+            toolbar.innerHTML += `
+        <label>Number Field: <input type="number" value="${label.innerText}" onchange="updateField(this.value, '${element.dataset.type}')"></label>`;
+            break;
+        // Add more cases for other types as needed
+    }
+}
+
+function applyChanges() {
+    const label = document.getElementById('label').value;
+    const placeholder = document.getElementById('placeholder').value;
+    const helperText = document.getElementById('helperText').value;
+    const required = document.getElementById('required').checked;
+
+    // Update the output fields dynamically
+    document.getElementById('outputLabel').textContent = label + (required ? "*" : "");
+    const outputField = document.getElementById('outputField');
+    outputField.placeholder = placeholder;
+    document.getElementById('outputHelper').textContent = helperText;
+
+    if (required) {
+        outputField.setAttribute('required', 'required');
+    } else {
+        outputField.removeAttribute('required');
+    }
+}
+
+function updateField(value, type) {
+    console.log(value)
+    // const element = formCanvas.querySelector(`[data-type="${type}"] .element-label`);
+    // element.innerText = value;
+    const elements = document.querySelectorAll(`.form-element[data-type='${type}'] .element-label`);
+    elements.forEach(element => {
+        element.textContent = value; // Update label text
+
+
+    });
+    document.getElementById('outputLabel').textContent = label + (required ? "*" : "");
+    const outputField = document.getElementById('outputField');
+    outputField.placeholder = placeholder;
+    document.getElementById('outputHelper').textContent = helperText;
+    if (required) {
+        outputField.setAttribute('required', 'required');
+    } else {
+        outputField.removeAttribute('required');
+    }
+}
+
+
+function saveTitle(type, data) {
+    console.log(type, data)
+    switch (type) {
+        case 'titleField':
+            const titleValue = document.getElementById('title').value;
+            const titleElement = document.createElement('h1');
+            titleElement.innerText = titleValue;
+            formCanvas.appendChild(titleElement);
+            break;
+        case 'subtitleField':
+            const SubtitleValue = document.getElementById('subtitle').value;
+            const subtitleElement = document.createElement('h2');
+            subtitleElement.innerText = SubtitleValue;
+            formCanvas.appendChild(subtitleElement);
+            break;
+        case 'paragraphField':
+            const paraValue = document.getElementById('paragraph').value;
+            const paraElement = document.createElement('p');
+            paraElement.innerText = paraValue;
+            formCanvas.appendChild(paraElement);
+            break;
+            case 'separatorField':
+                // const separatorValue = document.getElementById('separator').value;
+                const separatorElement= document.createElement('hr');
+                separatorElement.style.border = '1px solid #000';
+                formCanvas.appendChild(separatorElement);
+                break;
+    }
+
+    // Create a new element (h2 for title)
+
+
+    // Append the new element to formCanvas
+    // formCanvas.appendChild(titleElement);
+
+    // Optional: Log or alert to confirm the save
+    console.log(`Title saved: ${titleValue}`);
+    // const titleInput = formCanvas.querySelector('input[type="text"]'); // Get the input field
+    // const newTitle = titleInput.value; // Get the input value
+    const elements = document.querySelectorAll(`.form-element[data-type='${type}'] .element-label`);
+
+    // Update all corresponding labels
+    // elements.forEach(element => {
+    //     element.textContent = newTitle; // Update the label text
+    // });
+
+    // Clear the toolbar after saving
+    // toolbar.innerHTML = `<h3>Form Elements</h3>`;
+    displayAvailableElements(); // Call to display available form elements again
+
+
+}
+
+function displayAvailableElements() {
+    toolbar.innerHTML = `<h3>Form Elements</h3>`;
+    draggables.forEach(draggable => {
+        // Repopulate the draggable buttons
+        const button = document.createElement('button');
+        button.classList.add('draggable');
+        button.id = draggable.id;
+        button.draggable = true;
+        button.innerText = draggable.innerText;
+        toolbar.appendChild(button);
+
+        // Re-enable drag functionality for the buttons
+        button.addEventListener('dragstart', (e) => {
+            draggedElement = e.target.id;
+        });
+    });
+}
+
+// Delete the form element
+function deleteField(button) {
+    const element = button.closest('.form-element');
+    element.remove();
+}
+
+
+document.getElementById('saveForm').addEventListener('click', () => {
+    const formHTML = toolbar.innerHTML; // Get the form HTML
+    const formCSS = getCSS(); // Get the current styles used for the form
+
+    const formData = {
+        html: formHTML,
+        css: formCSS
+    };
+
+    // Save both HTML and CSS to localStorage
+    localStorage.setItem('formStructure', JSON.stringify(formData));
+    alert('Form structure saved successfully!');
+    updatePreviewModal(); // Update preview modal
+});
+function getCSS() {
+    let styles = "";
+    const styleSheets = document.styleSheets;
+
+    for (let i = 0; i < styleSheets.length; i++) {
+        try {
+            const rules = styleSheets[i].cssRules || styleSheets[i].rules; // Cross-browser support
+            for (let j = 0; j < rules.length; j++) {
+                styles += rules[j].cssText; // Get the CSS rules
+            }
+        } catch (e) {
+            // Cross-origin stylesheet, ignore
+            console.warn(`Couldn't access stylesheet: ${styleSheets[i]}`);
+        }
+    }
+
+    return styles;
+}
+
+
+function updatePreviewModal() {
+    const savedFormData = JSON.parse(localStorage.getItem('formStructure')) || {};
+
+    const previewWindow = window.open('', '_blank');
+    previewWindow.document.write(`
+        <html>
+            <head>
+                <title>Form Preview</title>
+                <style>
+                    ${savedFormData.css || ''}
+                </style>
+            </head>
+            <body>
+                ${savedFormData.html || '<p>No form elements saved yet.</p>'}
+            </body>
+        </html>
+    `);
+    previewWindow.document.close();
+}
+function saveFullFormHTML() {
+    const formHTML = formCanvas.innerHTML; // Get all the HTML elements from the canvas
+    localStorage.setItem('fullFormHTML', formHTML);
+}
+
+// Preview Button functionality
+document.getElementById('previewBtn').addEventListener('click', () => {
+    const savedFormHTML = localStorage.getItem('fullFormHTML');
+
+    if (savedFormHTML) {
+        const previewWindow = window.open('', '_blank');
+        previewWindow.document.write(`
+            <html>
+                <head>
+                    <title>Form Preview</title>
+                    <style>
+                        /* You can inject custom CSS here */
+                        body {
+                            font-family: Arial, sans-serif;
+                        }
+                        .form-element {
+                            margin-bottom: 15px;
+                        }
+                        .form-element label {
+                            font-weight: bold;
+                        }
+                        .form-element input, .form-element textarea {
+                            width: 100%;
+                            padding: 8px;
+                            border: 1px solid #ddd;
+                            border-radius: 4px;
+                        }
+                        .form-element button {
+                            background-color: #007bff;
+                            color: white;
+                            border: none;
+                            padding: 5px 10px;
+                            cursor: pointer;
+                        }
+                        .form-element button:hover {
+                            background-color: #0056b3;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${savedFormHTML}
+                </body>
+            </html>
+        `);
+        previewWindow.document.close();
+    } else {
+        alert("No form structure saved!");
+    }
+});
+window.addEventListener('load', () => {
+    const savedFormData = JSON.parse(localStorage.getItem('formStructure')) || {};
+
+    if (savedFormData.html && savedFormData.css) {
+        formCanvas.innerHTML = savedFormData.html; // Restore form elements from localStorage
+        const styleTag = document.createElement('style');
+        styleTag.innerHTML = savedFormData.css; // Inject saved CSS into the page
+        document.head.appendChild(styleTag);
+    }
+});

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Form Builder</title>
+  <style>
+    /* Basic styles for form builder */
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      display: flex;
+      margin: 20px;
+    }
+
+h3{
+  text-align: center;
+}
+
+    .toolbar, #formCanvas, #preview-modal {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 10px;
+}
+
+
+    /* Move the toolbar to the right */
+    .form-canvas {
+      flex-grow: 1;
+      margin-right: 20px; /* Adjust margin on the right */
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      min-height: 400px;
+      position: relative;
+    }
+
+    .toolbar {
+      width: 30%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+      text-align: right; /* Aligns buttons to the right */
+    }
+
+    .toolbar button {
+      display: block;
+      margin-bottom: 10px;
+      width: 100%;
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .form-element {
+      margin-bottom: 15px;
+      /* padding: 10px; */
+      border: 1px dashed #ccc;
+      padding: 5px;
+      position: relative;
+      /* cursor: pointer; */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+    }
+
+
+    
+    .save-button {
+      margin-top: 20px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+    }
+
+    
+
+    .element-label {
+      margin-right: auto; /* Ensures the label stays on the left */
+    }
+
+    /* Style for edit and delete buttons */
+    .action-buttons {
+      display: flex;
+      gap: 10px; /* Space between the buttons */
+    }
+
+
+    .form-element button {
+      padding: 5px;
+      cursor: pointer;
+    }
+
+    .form-element:last-child {
+      margin-bottom: 0;
+    }
+
+    .save-button:hover {
+      background-color: #45a049;
+    }
+
+
+    .delete-button {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+    }
+
+    .edit-button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
+
+    .drop-hint {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: pulse 1s infinite;
+      text-align: center;
+    }
+
+    .drop-hint p {
+      color: gray;
+      font-size: 12px;
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 0.7;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0.7;
+      }
+    }
+
+    .invisible {
+      opacity: 0;
+    }
+    .drag-over {
+      border: 2px dashed #007bff;
+    }
+
+    .hidden {
+    display: none;
+}
+.buttcen{
+  margin-left: 200px;
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <div class="form-canvas" id="formCanvas">
+      <h3>Your Form</h3>
+
+      <div class="drop-hint">
+        <p>Click for properties or drag to move</p>
+      </div>
+    </div>
+
+ 
+    <div class="toolbar">
+      <h3>Form Elements</h3>
+      <button class="draggable" id="titleField" draggable="true">Title Field</button>
+      <button class="draggable" id="subtitleField" draggable="true">Subtitle Field</button>
+      <button class="draggable" id="paragraphField" draggable="true">Paragraph</button>
+      <button class="draggable" id="separatorField" draggable="true">Separator</button>
+      <button class="draggable" id="spacerField" draggable="true">Spacer</button>
+      <button class="draggable" id="textField" draggable="true">Text Field</button>
+      <button class="draggable" id="numberField" draggable="true">Number Field</button>
+      <button class="draggable" id="textAreaField" draggable="true">TextArea</button>
+      <button class="draggable" id="selectField" draggable="true">Select Field</button>
+      <button class="draggable" id="checkboxField" draggable="true">Checkbox</button>
+      <button class="draggable" id="buttonField" draggable="true">Button</button>
+      <!-- <button class="draggable" id="tableField" draggable="true">Table</button> -->
+    </div>
+  </div>
+
+   <div class="buttcen">
+  <button class="save-button" id="saveForm">Save Form</button>
+  <button class="save-button" type="button" id="previewBtn">Preview</button>
+  <button class="save-button" type="button" id="downloadFormBtn">import file</button>
+  <button class="save-button"  onclick="downloadFormStructureAsXML()">Download as XML</button>
+
+   </div>
+
+  <div id="preview-modal" class="hidden">
+    <div id="preview-content"></div>
+</div>
+
+ <script src="./demo.js"></script>
+</body>
+</html>

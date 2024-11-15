@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Builder</title>
+    <link rel="stylesheet" href="../css/element.css">
+</head>
+<body>
+    <div class="container">
+        <div class="editor" id="editor">
+            <p class="text-sm text-muted">Drag and drop elements here</p>
+            <div class="dropzone" id="dropzone"></div>
+            <div class="button-group">
+                <button id="saveForm">Save</button>
+                <button id="previewForm">Preview</button>
+                <button id="exportXML">Export XML</button>
+                <input type="file" id="importXML" accept=".xml">
+            </div>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div id="elements-list">
+                <p class="text-sm text-muted">Drag and drop elements</p>
+                <div class="separator"></div>
+                <div class="grid">
+                    <p class="text-sm text-muted col-span-1">Layout elements</p>
+                    <div class="draggable" draggable="true" data-element="Title Field">Title Field</div>
+                    <div class="draggable" draggable="true" data-element="SubTitle Field">SubTitle Field</div>
+                    <div class="draggable" draggable="true" data-element="Paragraph Field">Paragraph Field</div>
+                    <div class="draggable" draggable="true" data-element="Separator">Separator</div>
+                    <div class="draggable" draggable="true" data-element="Spacer">Spacer</div>
+
+                    <p class="text-sm text-muted col-span-1">Form elements</p>
+                    <div class="draggable" draggable="true" data-element="Text Field">Text Field</div>
+                    <div class="draggable" draggable="true" data-element="Number Field">Number Field</div>
+                    <div class="draggable" draggable="true" data-element="Text Area Field">Text Area Field</div>
+                    <div class="draggable" draggable="true" data-element="Date Field">Date Field</div>
+                    <div class="draggable" draggable="true" data-element="Select Field">Select Field</div>
+                    <div class="draggable" draggable="true" data-element="Checkbox Field">Checkbox Field</div>
+                    <div class="draggable" draggable="true" data-element="Button Field">Button Field</div>
+                    <div class="draggable" draggable="true" data-element="Table Field">Table Field</div>
+                </div>
+            </div>
+            <div id="element-settings" class="element-settings" style="display:none;">
+                <h3>Element Settings</h3>
+                <div id="settings-content">
+                    <p class="text-muted">Click on an element to edit its settings</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+    <script src="../js/element.js"></script>
+</body>
+</html>
